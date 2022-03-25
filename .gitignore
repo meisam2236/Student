@@ -34,3 +34,4 @@ build/
 
 ### Mac files
 .DS_Store
+.swp

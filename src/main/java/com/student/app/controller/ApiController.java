@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -31,12 +33,11 @@ public class ApiController {
         return apiResponse.getData();
     }
 
-    /* need reactive web application
     @GetMapping("web-client/")
     public List<Employee> webClientGetAllEmployees() {
-        WebClient webClient = new WebClient.create();
-        ApiResponse apiResponse = webClient.get().uri(apiUrl).retrieve().bodyToList(ApiResponse.class);
+        WebClient webClient = WebClient.create();
+        ApiResponse apiResponse = webClient.get().uri(apiUrl).retrieve().bodyToMono(ApiResponse.class).block();
         return apiResponse.getData();
     }
-    */
+
 }
