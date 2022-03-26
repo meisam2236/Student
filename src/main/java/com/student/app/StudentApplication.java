@@ -44,15 +44,6 @@ public class StudentApplication implements CommandLineRunner {
 		Map<String, ArrayList<Student>> schools = studentService.getStudentsAbove15();
 		for (Map.Entry<String, ArrayList<Student>> entry : schools.entrySet()) {
 			log.info(entry.getKey()+ " : " + map.get(entry.getKey()).toString());
-//			String school = entry.getKey();
-//			log.info(school+ "...");
-//			ArrayList<Student> students = entry.getValue();
-//			for (Student student: students) {
-//				String firstName = student.getFirstName();
-//				String lastName = student.getLastName();
-//				String grade = String.valueOf(student.getGrade());
-//				log.info(firstName + " " + lastName + ": " + grade);
-//			}
 		}
 		redisson.shutdown();
 	}

@@ -1,0 +1,18 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meisam?useSSL=false
+    username: postgres
+    password:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+papi:
+  uri: http://dummy.restapiexample.com/api/v1/employees
+
+redisson:
+  url: redis://127.0.0.1:6379
