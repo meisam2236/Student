@@ -11,6 +11,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         ddl-auto: update
+  security:
+    user:
+      name: meisam
+      password: 2236
 papi:
   uri: http://dummy.restapiexample.com/api/v1/employees
 

@@ -15,6 +15,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableWebSecurity
 public class StudentApplication implements CommandLineRunner {
 	private static final Logger log = LoggerFactory.getLogger(GradeLogger.class);
 	private StudentService studentService;
