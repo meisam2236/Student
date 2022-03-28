@@ -1,8 +1,7 @@
 package com.student.app;
 
 import com.student.app.helper.GradeLogger;
-import com.student.app.model.RedisStudent;
-import com.student.app.model.Student;
+import com.student.app.model.repr.StudentRepr;
 import com.student.app.service.StudentService;
 import org.redisson.Redisson;
 import org.redisson.api.RMap;
@@ -42,10 +41,10 @@ public class StudentApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		RedissonClient redisson = Redisson.create();
-		RMap<String, ArrayList<RedisStudent>> map = redisson.getMap("SCHOOL");
-		Map<String, ArrayList<Student>> schools = studentService.getStudentsAbove15();
-		for (Map.Entry<String, ArrayList<Student>> entry : schools.entrySet()) {
-			log.info(entry.getKey()+ " : " + map.get(entry.getKey()).toString());
+		RMap<String, ArrayList<StudentRepr>> map = redisson.getMap("SCHOOL");
+		Map<String, ArrayList<StudentRepr>> schools = studentService.getStudentsAbove15();
+		for (Map.Entry<String, ArrayList<StudentRepr>> entry : schools.entrySet()) {
+			log.info(entry.getKey() + " : " + map.get(entry.getKey()).toString());
 		}
 		redisson.shutdown();
 	}

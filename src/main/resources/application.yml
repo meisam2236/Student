@@ -15,6 +15,11 @@ spring:
     user:
       name: meisam
       password: 2236
+  rabbitmq:
+    dynamic: true
+    host: localhost
+    port: 5672
+
 papi:
   uri: http://dummy.restapiexample.com/api/v1/employees
 

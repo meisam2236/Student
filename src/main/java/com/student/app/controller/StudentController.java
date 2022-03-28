@@ -1,8 +1,7 @@
 package com.student.app.controller;
 
 import com.student.app.helper.JsonWriter;
-import com.student.app.model.RedisStudent;
-import com.student.app.model.Student;
+import com.student.app.model.repr.StudentRepr;
 import com.student.app.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +21,23 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> saveStudent(@RequestBody Student student){
-        return new ResponseEntity<Student>(studentService.saveStudent(student), HttpStatus.CREATED);
+    public ResponseEntity<StudentRepr> saveStudent(@RequestBody StudentRepr student){
+        return new ResponseEntity<StudentRepr>(studentService.saveStudent(student), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<Student> getAllStudents(){
+    public List<StudentRepr> getAllStudents(){
         return studentService.getAllStudents();
     }
 
     @GetMapping("{id}/")
-    public Student getStudentById(@PathVariable("id") long id){
+    public StudentRepr getStudentById(@PathVariable("id") long id){
         return studentService.getStudentById(id);
     }
 
     @PutMapping("{id}/")
-    public ResponseEntity<Student> updateStudentById(@PathVariable("id") long id, @RequestBody Student student) {
-        return new ResponseEntity<Student>(studentService.updateStudent(student, id), HttpStatus.ACCEPTED);
+    public ResponseEntity<StudentRepr> updateStudentById(@PathVariable("id") long id, @RequestBody StudentRepr student){
+        return new ResponseEntity<StudentRepr>(studentService.updateStudent(student, id), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("{id}/")
@@ -47,20 +46,15 @@ public class StudentController {
         return new ResponseEntity<String>("Student deleted successfully!", HttpStatus.ACCEPTED);
     }
     @GetMapping("above-15/")
-    public Map<String, ArrayList<Student>> getStudentsByGrade() {
+    public Map<String, ArrayList<StudentRepr>> getStudentsByGrade() {
         return studentService.getStudentsAbove15();
     }
     @GetMapping("backup/")
     public String getStudentInJson() {
-        List<Student> students = studentService.getAllStudents();
+        List<StudentRepr> students = studentService.getAllStudents();
         ExecutorService executor = Executors.newFixedThreadPool(3);
-        for (Student student : students) {
-            RedisStudent temp = new RedisStudent();
-            temp.setId(student.getId());
-            temp.setFirstName(student.getFirstName());
-            temp.setLastName(student.getLastName());
-            temp.setGrade(student.getGrade());
-            executor.submit(JsonWriter.jsonFileWriter(String.valueOf(student.getId()), temp));
+        for (StudentRepr student : students) {
+            executor.submit(JsonWriter.jsonFileWriter(String.valueOf(student.getId()), student));
         }
         return "Backup Completed!";
     }

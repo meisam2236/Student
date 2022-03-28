@@ -24,17 +24,17 @@ public class GradeLogger {
     }
     @PostConstruct
     private void postConstruct() {
-        School school = new School();
-        school.setName("Baharestan");
-        schoolService.saveSchool(school);
-        Student student = new Student();
-        student.setFirstName("Alireza");
-        student.setLastName("Asghari");
-        student.setGrade(20);
-        studentService.saveStudent(student);
-        List<Student> students = studentService.getAllStudents();
-        List<School> schools = schoolService.getAllSchools();
-        schoolService.addStudent(schools.get(schools.size()-1).getId() ,students.get(students.size()-1).getId());
+//        School school = new School();
+//        school.setName("Baharestan");
+//        schoolService.saveSchool(school);
+//        Student student = new Student();
+//        student.setFirstName("Alireza");
+//        student.setLastName("Asghari");
+//        student.setGrade(20);
+//        studentService.saveStudent(student);
+//        List<Student> students = studentService.getAllStudents();
+//        List<School> schools = schoolService.getAllSchools();
+//        schoolService.addStudent(schools.get(schools.size()-1).getId() ,students.get(students.size()-1).getId());
     }
 
     @Scheduled(fixedRate = 300000)
