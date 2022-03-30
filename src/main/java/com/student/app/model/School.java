@@ -1,7 +1,8 @@
 package com.student.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import com.vividsolutions.jts.geom.Geometry;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,4 +20,6 @@ public class School implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "school")
     private List<Student> students;
+    @Column(name = "location")
+    private Geometry location;
 }

@@ -1,6 +1,6 @@
 package com.student.app.controller;
 
-import com.student.app.model.School;
+import com.student.app.model.repr.SchoolRepr;
 import com.student.app.service.SchoolService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +17,20 @@ public class SchoolController {
         this.schoolService = schoolService;
     }
     @PostMapping
-    public ResponseEntity<School> saveSchool(@RequestBody School school) {
-        return new ResponseEntity<School>(schoolService.saveSchool(school), HttpStatus.CREATED);
+    public ResponseEntity<SchoolRepr> saveSchool(@RequestBody SchoolRepr school) {
+        return new ResponseEntity<SchoolRepr>(schoolService.saveSchool(school), HttpStatus.CREATED);
     }
     @GetMapping
-    public List<School> getAllSchools(){
+    public List<SchoolRepr> getAllSchools(){
         return schoolService.getAllSchools();
     }
     @GetMapping("{id}/")
-    public School getSchoolById(@PathVariable(name = "id") long id) {
+    public SchoolRepr getSchoolById(@PathVariable(name = "id") long id) {
         return schoolService.getSchoolById(id);
     }
     @PutMapping("{id}/")
-    public ResponseEntity<School> updateSchoolById(@PathVariable(name = "id") long id, @RequestBody School school){
-        return new ResponseEntity<School>(schoolService.updateSchool(school, id), HttpStatus.ACCEPTED);
+    public ResponseEntity<SchoolRepr> updateSchoolById(@PathVariable(name = "id") long id, @RequestBody SchoolRepr school){
+        return new ResponseEntity<SchoolRepr>(schoolService.updateSchool(school, id), HttpStatus.ACCEPTED);
     }
     @DeleteMapping("{id}/")
     public ResponseEntity<String> deleteSchoolById(@PathVariable(name = "id") long id) {

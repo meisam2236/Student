@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8090
 
 spring:
   datasource:
@@ -7,14 +7,17 @@ spring:
     username: postgres
     password:
   jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        ddl-auto: update
+        dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
+
   security:
     user:
       name: meisam
-      password: 2236
+      password: 1234
   rabbitmq:
     dynamic: true
     host: localhost
