@@ -1,4 +1,4 @@
-package com.student.app.helper;
+package com.student.app.config;
 
 import com.student.app.service.StudentService;
 import com.student.app.service.impl.StudentServiceImpl;
@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RPCRabbitConfig {
+
     @Bean
     public Queue queue() {
         return new Queue("rpc");

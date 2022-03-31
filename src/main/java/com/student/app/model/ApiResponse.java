@@ -1,10 +1,13 @@
 package com.student.app.model;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApiResponse {
     private String status;
     private List<Employee> data;

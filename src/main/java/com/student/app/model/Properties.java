@@ -1,10 +1,13 @@
 package com.student.app.model;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Component
 @ConfigurationProperties("papi")
 public class Properties {

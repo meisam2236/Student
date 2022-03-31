@@ -1,15 +1,12 @@
 package com.student.app.controller;
 
-import com.student.app.helper.JsonWriter;
-import com.student.app.model.repr.StudentRepr;
+import com.student.app.model.dto.StudentDto;
 import com.student.app.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @RestController
 @RequestMapping("/api/v1/student/")
@@ -21,23 +18,23 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentRepr> saveStudent(@RequestBody StudentRepr student){
-        return new ResponseEntity<StudentRepr>(studentService.saveStudent(student), HttpStatus.CREATED);
+    public ResponseEntity<StudentDto> saveStudent(@RequestBody StudentDto student){
+        return new ResponseEntity<StudentDto>(studentService.saveStudent(student), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<StudentRepr> getAllStudents(){
+    public List<StudentDto> getAllStudents(){
         return studentService.getAllStudents();
     }
 
     @GetMapping("{id}/")
-    public StudentRepr getStudentById(@PathVariable("id") long id){
+    public StudentDto getStudentById(@PathVariable("id") long id){
         return studentService.getStudentById(id);
     }
 
     @PutMapping("{id}/")
-    public ResponseEntity<StudentRepr> updateStudentById(@PathVariable("id") long id, @RequestBody StudentRepr student){
-        return new ResponseEntity<StudentRepr>(studentService.updateStudent(student, id), HttpStatus.ACCEPTED);
+    public ResponseEntity<StudentDto> updateStudentById(@PathVariable("id") long id, @RequestBody StudentDto student){
+        return new ResponseEntity<StudentDto>(studentService.updateStudent(student, id), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("{id}/")
@@ -45,17 +42,15 @@ public class StudentController {
         studentService.deleteStudent(id);
         return new ResponseEntity<String>("Student deleted successfully!", HttpStatus.ACCEPTED);
     }
+
     @GetMapping("above-15/")
-    public Map<String, ArrayList<StudentRepr>> getStudentsByGrade() {
+    public Map<String, ArrayList<StudentDto>> getStudentsByGrade() {
         return studentService.getStudentsAbove15();
     }
+
     @GetMapping("backup/")
     public String getStudentInJson() {
-        List<StudentRepr> students = studentService.getAllStudents();
-        ExecutorService executor = Executors.newFixedThreadPool(3);
-        for (StudentRepr student : students) {
-            executor.submit(JsonWriter.jsonFileWriter(String.valueOf(student.getId()), student));
-        }
+        studentService.createStudentsInJson();
         return "Backup Completed!";
     }
 }

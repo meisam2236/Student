@@ -1,15 +1,14 @@
-package com.student.app.model.repr;
+package com.student.app.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentRepr implements Serializable {
+public class StudentDto implements Serializable {
     private static final long serialVersionUID = 2;
     private long id;
     private String firstName;

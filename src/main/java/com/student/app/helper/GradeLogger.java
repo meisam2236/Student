@@ -4,19 +4,18 @@ import com.student.app.model.School;
 import com.student.app.model.Student;
 import com.student.app.service.SchoolService;
 import com.student.app.service.StudentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+@Slf4j
 @Component
 public class GradeLogger {
     StudentService studentService;
     SchoolService schoolService;
-    private static final Logger log = LoggerFactory.getLogger(GradeLogger.class);
     public GradeLogger(StudentService studentService, SchoolService schoolService) {
         super();
         this.studentService = studentService;

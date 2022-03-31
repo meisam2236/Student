@@ -1,18 +1,14 @@
 package com.student.app.helper;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Polygon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.vividsolutions.jts.geom.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 @Component
+@Slf4j
 public class Geometry {
-    private static final Logger log = LoggerFactory.getLogger(GradeLogger.class);
     public static String intersectMessage(LineString line, Polygon polygon) {
         return line + " did " + (!line.crosses(polygon) ? "not " : "") + "crossed " + polygon;
     }

@@ -1,8 +1,11 @@
 package com.student.app.model;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employee {
     private long id;
     private String employee_name;

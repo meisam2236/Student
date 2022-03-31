@@ -1,51 +1,47 @@
 package com.student.app.service.impl;
 
 import com.student.app.exception.ResourceNotFoundException;
+import com.student.app.helper.JsonWriter;
 import com.student.app.model.Student;
-import com.student.app.model.repr.StudentRepr;
+import com.student.app.model.dto.StudentDto;
 import com.student.app.repository.StudentRepository;
 import com.student.app.service.StudentService;
-import org.redisson.Redisson;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
     private StudentRepository studentRepository;
-    @Value("${redisson.url}")
-    private String redisUrl;
-    private Config config;
+    private RedissonClient redis;
 
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, RedissonClient redis) {
         super();
         this.studentRepository = studentRepository;
-        Config config = new Config();
-        config.useSingleServer().setAddress(redisUrl);
+        this.redis = redis;
     }
 
 
     @Override
-    public StudentRepr saveStudent(StudentRepr student) {
+    public StudentDto saveStudent(StudentDto student) {
         studentRepository.save(new Student(
                 student.getId(), student.getFirstName(), student.getLastName(), student.getGrade(),
                 null
         ));
-        System.out.println(34);
         return student;
     }
 
     @Override
-    public List<StudentRepr> getAllStudents() {
+    public List<StudentDto> getAllStudents() {
         List<Student> dbStudents = studentRepository.findAll();
-        List<StudentRepr> localStudents = new ArrayList<StudentRepr>();
+        List<StudentDto> localStudents = new ArrayList<StudentDto>();
         for (Student student: dbStudents) {
-            localStudents.add(new StudentRepr(
+            localStudents.add(new StudentDto(
                     student.getId(), student.getFirstName(), student.getLastName(), student.getGrade(),
                     ((student.getSchool() == null) ? "" : student.getSchool().getName())
             ));
@@ -54,7 +50,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentRepr getStudentById(long id) {
+    public StudentDto getStudentById(long id) {
 //        Optional<Student> student = studentRepository.findById(id);
 //        if (student.isPresent()){
 //            return student.get();
@@ -64,14 +60,14 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Student", "Id", id)
         );
-        return new StudentRepr(
+        return new StudentDto(
                 student.getId(), student.getFirstName(), student.getLastName(), student.getGrade(),
                 ((student.getSchool() == null) ? "" : student.getSchool().getName())
         );
     }
 
     @Override
-    public StudentRepr updateStudent(StudentRepr student, long id) {
+    public StudentDto updateStudent(StudentDto student, long id) {
         Student dbStudent = studentRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Student", "Id", id)
         );
@@ -91,34 +87,41 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Map<String, ArrayList<StudentRepr>> getStudentsAbove15() {
+    public Map<String, ArrayList<StudentDto>> getStudentsAbove15() {
         List<Student> students = studentRepository.getStudentsAbove15();
-        Map<String, ArrayList<StudentRepr>> studentsOfSchool = students.stream().collect(Collectors.toMap(
+        Map<String, ArrayList<StudentDto>> studentsOfSchool = students.stream().collect(Collectors.toMap(
                 student -> ((student.getSchool() == null) ? "" : student.getSchool().getName()),
                 student -> {
-                    ArrayList<StudentRepr> temp = new ArrayList<StudentRepr>();
-                    temp.add(new StudentRepr(
+                    ArrayList<StudentDto> temp = new ArrayList<StudentDto>();
+                    temp.add(new StudentDto(
                             student.getId(), student.getFirstName(), student.getLastName(), student.getGrade(),
                             ((student.getSchool() == null) ? "" : student.getSchool().getName())
                     ));
                     return temp;
                 },
                 (obj1, obj2) -> {
-                    ArrayList<StudentRepr> temp = new ArrayList<StudentRepr>();
+                    ArrayList<StudentDto> temp = new ArrayList<StudentDto>();
                     temp.addAll(obj1);
                     temp.addAll(obj2);
                     return temp;
                 }
         ));
-        RedissonClient redisson = Redisson.create();
-        RMap<String, ArrayList<StudentRepr>> map = redisson.getMap("SCHOOL");
+        RMap<String, ArrayList<StudentDto>> map = redis.getMap("SCHOOL");
         map.putAll(studentsOfSchool);
-        redisson.shutdown();
         return studentsOfSchool;
     }
 
     @Override
     public Float getGradesAverage() {
         return studentRepository.getGradesAverage();
+    }
+
+    @Override
+    public void createStudentsInJson() {
+        List<StudentDto> students = getAllStudents();
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        for (StudentDto student : students) {
+            executor.submit(JsonWriter.jsonFileWriter(String.valueOf(student.getId()), student));
+        }
     }
 }

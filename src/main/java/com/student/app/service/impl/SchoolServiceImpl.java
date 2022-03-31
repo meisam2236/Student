@@ -3,8 +3,8 @@ package com.student.app.service.impl;
 import com.student.app.exception.ResourceNotFoundException;
 import com.student.app.model.School;
 import com.student.app.model.Student;
-import com.student.app.model.repr.SchoolRepr;
-import com.student.app.model.repr.StudentRepr;
+import com.student.app.model.dto.SchoolDto;
+import com.student.app.model.dto.StudentDto;
 import com.student.app.repository.SchoolRepository;
 import com.student.app.repository.StudentRepository;
 import com.student.app.service.SchoolService;
@@ -18,6 +18,7 @@ import java.util.List;
 public class SchoolServiceImpl implements SchoolService {
     private SchoolRepository schoolRepository;
     private StudentRepository studentRepository;
+
     public SchoolServiceImpl(SchoolRepository schoolRepository, StudentRepository studentRepository) {
         super();
         this.schoolRepository = schoolRepository;
@@ -25,7 +26,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public SchoolRepr saveSchool(SchoolRepr school) {
+    public SchoolDto saveSchool(SchoolDto school) {
         GeometryFactory geometryFactory = new GeometryFactory();
         schoolRepository.save(new School(
                 school.getId(), school.getName(), null,
@@ -35,19 +36,19 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public List<SchoolRepr> getAllSchools() {
+    public List<SchoolDto> getAllSchools() {
         List<School> dbSchools = schoolRepository.findAll();
-        List<SchoolRepr> localSchools = new ArrayList<>();
+        List<SchoolDto> localSchools = new ArrayList<>();
         for (School school: dbSchools) {
             Point location = (Point) school.getLocation();
-            List<StudentRepr> students = new ArrayList<>();
+            List<StudentDto> students = new ArrayList<>();
             for (Student student: school.getStudents()) {
-                students.add(new StudentRepr(
+                students.add(new StudentDto(
                         student.getId(), student.getFirstName(), student.getLastName(), student.getGrade(),
                         ((student.getSchool() == null) ? "" : student.getSchool().getName())
                 ));
             }
-            localSchools.add(new SchoolRepr(
+            localSchools.add(new SchoolDto(
                     school.getId(), school.getName(), students,
                     ((location == null) ? 0 :  location.getX()),
                     ((location == null) ? 0 :  location.getY())
@@ -57,19 +58,19 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public SchoolRepr getSchoolById(long id) {
+    public SchoolDto getSchoolById(long id) {
         School school = schoolRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("School", "Id", id)
         );
         Point location = (Point) school.getLocation();
-        List<StudentRepr> students = new ArrayList<>();
+        List<StudentDto> students = new ArrayList<>();
         for (Student student: school.getStudents()) {
-            students.add(new StudentRepr(
+            students.add(new StudentDto(
                     student.getId(), student.getFirstName(), student.getLastName(), student.getGrade(),
                     ((student.getSchool() == null) ? "" : student.getSchool().getName())
             ));
         }
-        return new SchoolRepr(
+        return new SchoolDto(
                 school.getId(), school.getName(), students,
                 ((location == null) ? 0 :  location.getX()),
                 ((location == null) ? 0 :  location.getY())
@@ -77,7 +78,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public SchoolRepr updateSchool(SchoolRepr school, long id) {
+    public SchoolDto updateSchool(SchoolDto school, long id) {
         GeometryFactory geometryFactory = new GeometryFactory();
         School dbSchool = schoolRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("School", "Id", id)

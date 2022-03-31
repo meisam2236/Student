@@ -1,15 +1,10 @@
 package com.student.app;
 
-import com.student.app.helper.GradeLogger;
-import com.student.app.model.repr.StudentRepr;
+import com.student.app.model.dto.StudentDto;
 import com.student.app.service.StudentService;
-import org.redisson.Redisson;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,19 +13,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.ArrayList;
 import java.util.Map;
 
-
+@Slf4j
 @SpringBootApplication
 @EnableScheduling
 public class StudentApplication implements CommandLineRunner{
-	private static final Logger log = LoggerFactory.getLogger(GradeLogger.class);
 	private StudentService studentService;
-	@Value("${redisson.url}")
-	private String redisUrl;
-	public StudentApplication(StudentService studentService) {
+	private RedissonClient redis;
+
+	public StudentApplication(StudentService studentService, RedissonClient redis) {
 		super();
 		this.studentService = studentService;
-		Config config = new Config();
-		config.useSingleServer().setAddress(redisUrl);
+		this.redis = redis;
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(StudentApplication.class, args);
@@ -38,12 +31,17 @@ public class StudentApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		RedissonClient redisson = Redisson.create();
-		RMap<String, ArrayList<StudentRepr>> map = redisson.getMap("SCHOOL");
-		Map<String, ArrayList<StudentRepr>> schools = studentService.getStudentsAbove15();
-		for (Map.Entry<String, ArrayList<StudentRepr>> entry : schools.entrySet()) {
-			log.info(entry.getKey() + " : " + map.get(entry.getKey()).toString());
+		RMap<String, ArrayList<StudentDto>> map = redis.getMap("SCHOOL");
+		Map<String, ArrayList<StudentDto>> schools = studentService.getStudentsAbove15();
+		for (Map.Entry<String, ArrayList<StudentDto>> entry : schools.entrySet()) {
+			log.info(entry.getKey() + ": ");
+			for (StudentDto student : map.get(entry.getKey())) {
+				log.info(
+						student.getId() + ". " +
+						student.getFirstName() + " " + student.getLastName() + ": " +
+						student.getGrade()
+				);
+			}
 		}
-		redisson.shutdown();
 	}
 }
